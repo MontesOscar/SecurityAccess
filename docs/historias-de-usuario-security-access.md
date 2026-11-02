@@ -1,6 +1,6 @@
 # Sistema de control de accesos y registro de visitantes
 
-**Documento de historias de usuario, versión final** (HU-01 a HU-16, equivalentes a R1 a R16)
+**Documento de historias de usuario, versión final** (HU-01 a HU-27, equivalentes a R1 a R27)
 
 ## Índice
 
@@ -8,9 +8,9 @@
 2. [Módulo 1: Autenticación](#módulo-1-autenticación) (R1 a R3)
 3. [Módulo 2: Gestión de viviendas](#módulo-2-gestión-de-viviendas) (R4 a R7)
 4. [Módulo 3: Gestión de usuarios](#módulo-3-gestión-de-usuarios) (R8 a R11)
-5. [Módulo 4: Residente](#módulo-4-residente) (R12 a R13)
-6. [Módulo 5: Guardia / Seguridad](#módulo-5-guardia--seguridad) (R14 a R15)
-7. [Módulo 6: Administración, reportes](#módulo-6-administración-reportes) (R16)
+5. [Módulo 4: Residente](#módulo-4-residente) (R12 a R14)
+6. [Módulo 5: Guardia / Seguridad](#módulo-5-guardia--seguridad) (R15 a R22)
+7. [Módulo 6: Administración, reportes](#módulo-6-administración-reportes) (R23 a R27)
 8. [Resumen](#resumen)
 
 ---
@@ -384,6 +384,7 @@
 - Fecha de entrada no anterior a hoy
 - Hora de salida posterior a entrada
 - QR único e irrepetible, válido solo en el horario establecido
+- La invitación inicia con estado "Activa"
 
 **Criterios de aceptación:**
 - Vivienda inactiva → no permite crear invitaciones
@@ -409,7 +410,8 @@
 - Solo ve registros de su vivienda y desde su asignación
 - No ve historial de residentes anteriores
 - No se pueden eliminar ni modificar registros
-- Estados: Activa / Usada / Vencida
+- Estados de la invitación: Activa / Usada / Vencida / Cancelada
+- Estados de la visita: Sin entrada / Dentro / Completada
 
 **Criterios de aceptación:**
 - Ordenada por fecha, más reciente primero
@@ -418,13 +420,40 @@
 
 ---
 
+### R14 | Cancelar invitación
+
+**Nombre:** Cancelar invitación activa
+
+**Descripción:** Como Residente, quiero cancelar una invitación que todavía no ha sido utilizada para impedir que el código QR permita el acceso.
+
+**Datos de entrada:**
+- Invitación activa
+- Confirmación de cancelación
+
+**Datos de salida:**
+- Estado de invitación: "Cancelada"
+- Mensaje de confirmación
+
+**Reglas de negocio:**
+- Solo se pueden cancelar invitaciones activas y sin entrada registrada
+- Un QR cancelado no permite registrar una entrada
+- Las invitaciones canceladas permanecen en el historial
+
+**Criterios de aceptación:**
+- Solicita confirmación antes de cancelar
+- La invitación deja de estar disponible para acceso
+- El guardia recibe el mensaje "Invitación cancelada" al escanearla
+- El residente puede consultar la invitación como "Cancelada"
+
+---
+
 ## Módulo 5: Guardia / Seguridad
 
-### R14 | Registrar entrada por escaneo QR
+### R15 | Registrar entrada por escaneo QR
 
 **Nombre:** Registrar entrada de visitante
 
-**Descripción:** Como Guardia, quiero escanear el código QR con la cámara, verificar validez, capturar identificación y autorizar el acceso. Sin escanear no avanzo.
+**Descripción:** Como Guardia, quiero escanear el código QR con la cámara, verificar su validez, capturar la identificación y autorizar o rechazar el acceso. Sin escanear no avanzo.
 
 **Datos de entrada:**
 - Lectura QR por cámara
@@ -438,7 +467,8 @@
 
 **Reglas de negocio:**
 - Sin escanear QR → no se muestran campos ni se avanza
-- QR debe existir, estar vigente y sin usar
+- QR debe existir, estar vigente y no estar cancelado
+- La visita asociada debe encontrarse en estado "Sin entrada"
 - Vivienda debe estar activa
 - Tipo y número de identificación → ambos obligatorios
 - Guardia verifica que la persona coincida con los datos
@@ -449,11 +479,12 @@
 - QR válido → datos cargados + campos habilitados
 - Tipo de identificación en lista desplegable
 - Campo vacío → botón Confirmar bloqueado
-- Confirmar → registro completo guardado
+- Identidad no coincidente → se puede rechazar el acceso registrando el motivo
+- Confirmar → registro completo guardado con visita en estado "Dentro"
 
 ---
 
-### R15 | Registrar salida por escaneo QR
+### R16 | Registrar salida por escaneo QR
 
 **Nombre:** Registrar salida de visitante
 
@@ -469,7 +500,7 @@
 **Reglas de negocio:**
 - Solo se cierra si existe entrada sin salida
 - No se piden datos de identificación nuevamente
-- Estado cambia a "Completado"
+- Estado de la visita cambia a "Completada"
 
 **Criterios de aceptación:**
 - Se abre cámara automáticamente
@@ -479,9 +510,166 @@
 
 ---
 
+### R17 | Registrar acceso rechazado
+
+**Nombre:** Registrar rechazo de acceso
+
+**Descripción:** Como Guardia, quiero registrar el rechazo de una visita indicando el motivo para mantener trazabilidad de los intentos de acceso.
+
+**Datos de entrada:**
+- QR escaneado
+- Motivo del rechazo
+
+**Datos de salida:**
+- Registro de acceso rechazado
+- Mensaje de confirmación
+
+**Reglas de negocio:**
+- Debe existir un QR escaneado o un intento identificable
+- El motivo es obligatorio
+- Un rechazo no crea una entrada ni cambia la visita a "Dentro"
+
+**Criterios de aceptación:**
+- Se muestran motivos predefinidos: QR inválido, vencido, cancelado, identidad no coincidente, vivienda inactiva y otro
+- Al seleccionar "Otro", se solicita una descripción
+- El rechazo queda asociado al guardia, fecha, hora y vivienda
+
+---
+
+### R18 | Gestionar salida manual
+
+**Nombre:** Registrar salida sin escaneo QR
+
+**Descripción:** Como Guardia autorizado, quiero registrar manualmente la salida de una visita cuando no sea posible escanear nuevamente el QR.
+
+**Datos de entrada:**
+- Registro de visita activa
+- Motivo de salida manual
+- Confirmación
+
+**Datos de salida:**
+- Hora de salida registrada
+- Visita en estado "Completada"
+
+**Reglas de negocio:**
+- Solo usuarios autorizados pueden registrar salidas manuales
+- Debe existir una visita en estado "Dentro"
+- El motivo es obligatorio
+- La operación queda registrada en auditoría
+
+**Criterios de aceptación:**
+- Permite buscar la visita activa por vivienda, visitante o identificación
+- Solicita confirmación antes de cerrar la visita
+- Registra guardia, fecha, hora y motivo
+- Una visita completada no puede cerrarse nuevamente
+
+---
+
+### R19 | Validar identidad del visitante
+
+**Nombre:** Comparar identidad con la invitación
+
+**Descripción:** Como Guardia, quiero comparar los datos de identificación del visitante con la invitación para evitar accesos no autorizados.
+
+**Datos de entrada:**
+- Nombre de la invitación
+- Tipo y número de identificación presentada
+
+**Datos de salida:**
+- Resultado de validación: Coincide / No coincide
+
+**Reglas de negocio:**
+- La validación se realiza después de escanear un QR válido
+- La identificación es obligatoria para autorizar el acceso
+- Una diferencia permite registrar el rechazo con su motivo
+
+**Criterios de aceptación:**
+- Los datos de la invitación se muestran antes de confirmar
+- El guardia puede indicar si la identidad coincide
+- Si no coincide, no se permite registrar la entrada como autorizada
+
+---
+
+### R20 | Gestionar permisos de cámara y lectura del QR
+
+**Nombre:** Manejar cámara y QR ilegible
+
+**Descripción:** Como Guardia, quiero recibir instrucciones claras cuando la cámara no esté disponible o el código QR no pueda leerse.
+
+**Datos de entrada:**
+- Permiso de cámara
+- Código QR presentado
+
+**Datos de salida:**
+- Cámara habilitada o mensaje de error accionable
+- Resultado de lectura del QR
+
+**Reglas de negocio:**
+- Sin permiso de cámara no se puede iniciar el escaneo
+- Un QR ilegible, alterado o ajeno al sistema no permite avanzar
+- Los errores no deben mostrar información sensible del sistema
+
+**Criterios de aceptación:**
+- Solicita el permiso de cámara cuando sea necesario
+- Si el permiso es denegado, indica cómo habilitarlo en configuración
+- QR ilegible → "No se pudo leer el código"
+- QR inválido o ajeno al sistema → "Código QR inválido"
+
+---
+
+### R21 | Consultar visitas dentro de la residencial
+
+**Nombre:** Ver visitas sin salida registrada
+
+**Descripción:** Como Guardia, quiero consultar las visitas que aún no registran salida para conocer quién permanece dentro de la residencial.
+
+**Datos de entrada:**
+- Filtros opcionales por vivienda o fecha
+
+**Datos de salida:**
+- Lista de visitas en estado "Dentro"
+- Visitante, vivienda, identificación y hora de entrada
+
+**Reglas de negocio:**
+- Solo se muestran visitas con entrada registrada y sin salida
+- La información debe actualizarse después de cada entrada o salida
+- La consulta respeta los permisos del guardia
+
+**Criterios de aceptación:**
+- Lista ordenada por hora de entrada
+- Permite filtrar por vivienda
+- Una visita desaparece de la lista al registrar su salida
+
+---
+
+### R22 | Notificar eventos de visita
+
+**Nombre:** Recibir notificaciones de acceso
+
+**Descripción:** Como Residente, quiero recibir una notificación cuando mi visitante entre, salga o tenga el acceso rechazado.
+
+**Datos de entrada:**
+- Evento de entrada, salida o rechazo
+
+**Datos de salida:**
+- Notificación asociada a la vivienda y la invitación
+
+**Reglas de negocio:**
+- Solo se notifica al residente actual de la vivienda
+- La notificación no debe incluir más datos personales de los necesarios
+- Un fallo de notificación no revierte el registro del acceso
+
+**Criterios de aceptación:**
+- Entrada autorizada → notifica visitante y hora
+- Salida registrada → notifica visitante y hora
+- Acceso rechazado → notifica visitante y motivo
+- La notificación queda disponible en el historial de la aplicación
+
+---
+
 ## Módulo 6: Administración, reportes
 
-### R16 | Consultar reporte general de accesos
+### R23 | Consultar reporte general de accesos
 
 **Nombre:** Ver reporte completo de accesos
 
@@ -510,6 +698,105 @@
 
 ---
 
+### R24 | Registrar auditoría de operaciones
+
+**Nombre:** Consultar auditoría del sistema
+
+**Descripción:** Como Administrador, quiero consultar quién realizó cada operación relevante para mantener la trazabilidad y facilitar la investigación de incidentes.
+
+**Datos de entrada:**
+- Filtros por usuario, rol, operación, vivienda y rango de fechas
+
+**Datos de salida:**
+- Registro de operación, usuario, fecha, hora, vivienda y resultado
+
+**Reglas de negocio:**
+- Se auditan inicios de sesión, cambios de usuarios y viviendas, creación y cancelación de invitaciones, entradas, salidas y rechazos
+- Los registros de auditoría no se pueden modificar ni eliminar
+- Solo el Administrador puede consultar la auditoría
+
+**Criterios de aceptación:**
+- Cada operación muestra usuario, fecha, hora, acción y resultado
+- Los filtros funcionan correctamente
+- Las operaciones fallidas relevantes también quedan registradas
+
+---
+
+### R25 | Consultar invitaciones y visitas
+
+**Nombre:** Consultar detalle de invitaciones
+
+**Descripción:** Como Residente, quiero consultar el detalle y estado de mis invitaciones para administrar mis visitas futuras.
+
+**Datos de entrada:**
+- Filtro por estado y rango de fechas
+
+**Datos de salida:**
+- Lista de invitaciones con visitante, vigencia, estado y estado de visita
+
+**Reglas de negocio:**
+- Solo se muestran invitaciones de la vivienda asignada
+- No se pueden modificar registros de acceso
+- Las invitaciones vencidas se identifican automáticamente
+
+**Criterios de aceptación:**
+- Permite consultar invitaciones activas, usadas, vencidas y canceladas
+- Muestra si la visita está sin entrada, dentro o completada
+- El residente puede abrir el detalle de cada invitación
+
+---
+
+### R26 | Exportar reportes
+
+**Nombre:** Exportar reporte de accesos
+
+**Descripción:** Como Administrador, quiero exportar los resultados filtrados para conservar evidencia y realizar análisis externos.
+
+**Datos de entrada:**
+- Filtros aplicados en el reporte general
+- Formato de exportación
+
+**Datos de salida:**
+- Archivo con los registros que cumplen los filtros
+
+**Reglas de negocio:**
+- Solo se exportan datos autorizados para el Administrador
+- El archivo respeta los filtros y el rango de fechas seleccionados
+- La exportación queda registrada en auditoría
+
+**Criterios de aceptación:**
+- Permite exportar al menos en formato CSV
+- El archivo contiene encabezados y datos consistentes
+- Un resultado sin registros informa claramente que no hay datos para exportar
+
+---
+
+### R27 | Gestionar sesión y acceso seguro
+
+**Nombre:** Cerrar sesión y controlar sesiones activas
+
+**Descripción:** Como usuario, quiero cerrar mi sesión y que el sistema proteja las sesiones inactivas para evitar accesos no autorizados.
+
+**Datos de entrada:**
+- Acción de cerrar sesión
+- Tiempo de inactividad
+
+**Datos de salida:**
+- Sesión cerrada
+- Redirección a inicio de sesión cuando corresponda
+
+**Reglas de negocio:**
+- El cierre de sesión invalida la sesión actual
+- Una sesión inactiva expira después del tiempo configurado
+- Las funciones protegidas requieren autenticación vigente
+
+**Criterios de aceptación:**
+- Opción "Cerrar sesión" disponible desde el menú de usuario
+- Al cerrar sesión no se puede regresar a pantallas protegidas usando el historial
+- La sesión expirada muestra un mensaje y solicita iniciar sesión nuevamente
+
+---
+
 ## Resumen
 
 | Módulo | Historias | Clave principal |
@@ -517,7 +804,7 @@
 | Autenticación | 3 | Acceso seguro por rol |
 | Gestión de viviendas | 4 | Se crean PRIMERO → disponibles para asignar |
 | Gestión de usuarios | 4 | Se asigna vivienda desde desplegable |
-| Residente | 2 | Invitaciones y su historial |
-| Guardia | 2 | Cámara = paso obligatorio + identificación |
-| Administración, reportes | 1 | Historial completo por vivienda |
-| **Total** | **16** | |
+| Residente | 3 | Invitaciones, cancelación e historial |
+| Guardia | 8 | Escaneo, validación, entradas, salidas y notificaciones |
+| Administración, reportes | 5 | Historial, auditoría y exportación |
+| **Total** | **27** | |
