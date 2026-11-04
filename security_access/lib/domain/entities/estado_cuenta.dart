@@ -1,0 +1,1 @@
+enum EstadoCuenta { activo, inactivo }
