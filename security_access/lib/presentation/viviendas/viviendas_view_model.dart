@@ -35,29 +35,24 @@ class ViviendasViewModel extends ChangeNotifier {
     await cargar();
   }
 
-  void publicarMensaje(String mensaje) {
-    state = state.copyWith(mensaje: mensaje);
-    notifyListeners();
+  Future<String?> desactivar(String id) {
+    return _cambiar(id: id, activar: false, mensaje: desactivada);
   }
 
-  Future<void> desactivar(String id) async {
-    await _cambiar(id: id, activar: false, mensaje: desactivada);
+  Future<String?> reactivar(String id) {
+    return _cambiar(id: id, activar: true, mensaje: reactivada);
   }
 
-  Future<void> reactivar(String id) async {
-    await _cambiar(id: id, activar: true, mensaje: reactivada);
-  }
-
-  Future<void> _cambiar({
+  Future<String?> _cambiar({
     required String id,
     required bool activar,
     required String mensaje,
   }) async {
     final resultado = await _cambiarEstado(id: id, activar: activar);
     if (resultado is! EstadoViviendaActualizado) {
-      return;
+      return null;
     }
-    state = state.copyWith(mensaje: mensaje);
     await cargar();
+    return mensaje;
   }
 }

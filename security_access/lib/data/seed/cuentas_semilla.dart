@@ -9,14 +9,44 @@ class RegistroCuenta {
     required this.contrasena,
     required this.rol,
     required this.estado,
+    this.telefono = '',
+    this.viviendaId,
+    this.viviendaNumero,
   });
 
   final String id;
   final String nombre;
   final String correo;
   final String contrasena;
+  final String telefono;
   final RolUsuario rol;
   final EstadoCuenta estado;
+  final String? viviendaId;
+  final String? viviendaNumero;
+
+  RegistroCuenta copyWith({
+    String? nombre,
+    String? telefono,
+    RolUsuario? rol,
+    EstadoCuenta? estado,
+    String? viviendaId,
+    String? viviendaNumero,
+    bool limpiarVivienda = false,
+  }) {
+    return RegistroCuenta(
+      id: id,
+      nombre: nombre ?? this.nombre,
+      correo: correo,
+      contrasena: contrasena,
+      telefono: telefono ?? this.telefono,
+      rol: rol ?? this.rol,
+      estado: estado ?? this.estado,
+      viviendaId: limpiarVivienda ? viviendaId : viviendaId ?? this.viviendaId,
+      viviendaNumero: limpiarVivienda
+          ? viviendaNumero
+          : viviendaNumero ?? this.viviendaNumero,
+    );
+  }
 }
 
 abstract final class CuentasSemilla {

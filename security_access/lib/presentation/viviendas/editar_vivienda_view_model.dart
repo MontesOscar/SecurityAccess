@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:security_access/domain/entities/vivienda.dart';
 import 'package:security_access/domain/usecases/editar_vivienda.dart';
 import 'package:security_access/domain/usecases/resultado_editar_vivienda.dart';
+import 'package:security_access/presentation/comun/validacion_formulario.dart';
 
 class EditarViviendaState {
   const EditarViviendaState({
@@ -38,16 +39,27 @@ class EditarViviendaViewModel extends ChangeNotifier {
   final Vivienda vivienda;
   EditarViviendaState state = const EditarViviendaState();
 
-  static const direccionObligatoria = 'La dirección es obligatoria';
+  void corregirDireccion() {
+    if (state.errorDireccion == null && state.mensaje == null) {
+      return;
+    }
+    state = state.copyWith(
+      errorDireccion: null,
+      limpiarErrores: true,
+      limpiarMensaje: true,
+    );
+    notifyListeners();
+  }
 
   Future<bool> guardar(String direccion) async {
     if (state.guardando) {
       return false;
     }
 
-    if (direccion.trim().isEmpty) {
+    final errorDireccion = ValidacionFormulario.direccion(direccion);
+    if (errorDireccion != null) {
       state = state.copyWith(
-        errorDireccion: direccionObligatoria,
+        errorDireccion: errorDireccion,
         limpiarErrores: true,
         limpiarMensaje: true,
       );
@@ -78,9 +90,9 @@ class EditarViviendaViewModel extends ChangeNotifier {
       case ViviendaEdicionNoEncontrada():
         state = state.copyWith(
           guardando: false,
-          mensaje: 'No se pudo actualizar la vivienda',
-          limpiarMensaje: true,
+          errorDireccion: 'No se pudo actualizar la vivienda',
           limpiarErrores: true,
+          limpiarMensaje: true,
         );
         notifyListeners();
         return false;

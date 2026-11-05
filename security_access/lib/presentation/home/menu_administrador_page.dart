@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:security_access/presentation/home/menu_rol_page.dart';
+import 'package:security_access/presentation/usuarios/usuarios_page.dart';
 import 'package:security_access/presentation/viviendas/viviendas_page.dart';
 
 class MenuAdministradorPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class MenuAdministradorPage extends StatelessWidget {
     return MenuRolPage(
       key: const Key('menu-administrador'),
       titulo: 'Menú del administrador',
-      descripcion: 'Registra y consulta las viviendas de la residencial.',
+      descripcion: 'Registra viviendas y usuarios de la residencial.',
       acciones: [
         MenuAccion(
           key: const Key('abrir-viviendas'),
@@ -20,6 +21,18 @@ class MenuAdministradorPage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const ViviendasPage(),
+              ),
+            );
+          },
+        ),
+        MenuAccion(
+          key: const Key('abrir-usuarios'),
+          etiqueta: 'Usuarios',
+          icono: Icons.people_outline,
+          alPresionar: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const UsuariosPage(),
               ),
             );
           },

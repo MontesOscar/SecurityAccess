@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:security_access/app/dependencias_app.dart';
 import 'package:security_access/domain/entities/estado_vivienda.dart';
 import 'package:security_access/domain/entities/vivienda.dart';
+import 'package:security_access/presentation/comun/mostrar_aviso.dart';
 import 'package:security_access/presentation/viviendas/crear_vivienda_page.dart';
 import 'package:security_access/presentation/viviendas/editar_vivienda_page.dart';
 import 'package:security_access/presentation/viviendas/historial_vivienda_page.dart';
@@ -87,10 +88,6 @@ class _ViviendasPageState extends State<ViviendasPage> {
                     ),
                 ],
               ),
-              if (estado.mensaje != null) ...[
-                const SizedBox(height: 16),
-                Text(estado.mensaje!, key: const Key('mensaje-viviendas')),
-              ],
               const SizedBox(height: 16),
               if (estado.viviendas.isEmpty)
                 Text(
@@ -132,7 +129,10 @@ class _ViviendasPageState extends State<ViviendasPage> {
       return;
     }
     await _viewModel!.cargar();
-    _viewModel!.publicarMensaje(mensaje);
+    if (!mounted) {
+      return;
+    }
+    mostrarAviso(context, mensaje);
   }
 
   Future<void> _confirmarCambio({
@@ -167,14 +167,16 @@ class _ViviendasPageState extends State<ViviendasPage> {
         );
       },
     );
-    if (confirmar != true) {
+    if (confirmar != true || !mounted) {
       return;
     }
-    if (activar) {
-      await _viewModel!.reactivar(vivienda.id);
-    } else {
-      await _viewModel!.desactivar(vivienda.id);
+    final aviso = activar
+        ? await _viewModel!.reactivar(vivienda.id)
+        : await _viewModel!.desactivar(vivienda.id);
+    if (!mounted || aviso == null) {
+      return;
     }
+    mostrarAviso(context, aviso);
   }
 }
 
