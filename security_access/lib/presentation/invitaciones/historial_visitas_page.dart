@@ -107,12 +107,15 @@ class _TarjetaVisita extends StatelessWidget {
     final salida = visita.salida == null
         ? 'Sin salida'
         : formatearFechaHora(visita.salida!);
+    final identificacion = visita.numeroIdentificacion == null
+        ? ''
+        : '\n${visita.tipoIdentificacion ?? 'Identificación'}: ${visita.numeroIdentificacion}';
     return Card(
       key: Key('visita-${visita.id}'),
       child: ListTile(
         title: Text(visita.nombreVisitante),
         subtitle: Text(
-          '${formatearFecha(visita.fecha)}\nEntrada: $entrada\nSalida: $salida',
+          '${formatearFecha(visita.fecha)}\nEntrada: $entrada\nSalida: $salida$identificacion',
         ),
         isThreeLine: true,
         trailing: Text(visita.estado.etiqueta),

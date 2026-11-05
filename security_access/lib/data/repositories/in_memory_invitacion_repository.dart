@@ -1,3 +1,4 @@
+import 'package:security_access/domain/entities/acceso_rechazado.dart';
 import 'package:security_access/domain/entities/invitacion.dart';
 import 'package:security_access/domain/entities/visita.dart';
 import 'package:security_access/domain/repositories/invitacion_repository.dart';
@@ -11,7 +12,10 @@ class InMemoryInvitacionRepository implements InvitacionRepository {
 
   final List<Invitacion> _invitaciones;
   final List<Visita> _visitas;
+  final List<AccesoRechazado> _rechazos = [];
   var _secuencia = 0;
+  var _secuenciaVisitas = 0;
+  var _secuenciaRechazos = 0;
 
   @override
   Future<List<Invitacion>> listar() async {
@@ -68,5 +72,37 @@ class InMemoryInvitacionRepository implements InvitacionRepository {
   @override
   Future<List<Visita>> listarVisitas() async {
     return List<Visita>.of(_visitas);
+  }
+
+  @override
+  Future<void> guardarVisita(Visita visita) async {
+    final indice = _visitas.indexWhere((actual) => actual.id == visita.id);
+    if (indice >= 0) {
+      _visitas[indice] = visita;
+      return;
+    }
+    _visitas.add(visita);
+  }
+
+  @override
+  Future<String> reservarIdVisita() async {
+    _secuenciaVisitas += 1;
+    return 'vis-$_secuenciaVisitas';
+  }
+
+  @override
+  Future<List<AccesoRechazado>> listarRechazos() async {
+    return List<AccesoRechazado>.of(_rechazos);
+  }
+
+  @override
+  Future<void> guardarRechazo(AccesoRechazado rechazo) async {
+    _rechazos.add(rechazo);
+  }
+
+  @override
+  Future<String> reservarIdRechazo() async {
+    _secuenciaRechazos += 1;
+    return 'rec-$_secuenciaRechazos';
   }
 }
