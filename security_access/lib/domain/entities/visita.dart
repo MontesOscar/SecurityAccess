@@ -10,6 +10,9 @@ class Visita {
     required this.estado,
     this.entrada,
     this.salida,
+    this.guardiaId,
+    this.tipoIdentificacion,
+    this.numeroIdentificacion,
   });
 
   final String id;
@@ -20,4 +23,7 @@ class Visita {
   final DateTime? entrada;
   final DateTime? salida;
   final EstadoVisita estado;
+  final String? guardiaId;
+  final String? tipoIdentificacion;
+  final String? numeroIdentificacion;
 }

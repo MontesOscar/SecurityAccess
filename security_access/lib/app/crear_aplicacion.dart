@@ -23,7 +23,10 @@ import 'package:security_access/domain/usecases/crear_vivienda.dart';
 import 'package:security_access/domain/usecases/editar_usuario.dart';
 import 'package:security_access/domain/usecases/editar_vivienda.dart';
 import 'package:security_access/domain/usecases/iniciar_sesion.dart';
+import 'package:security_access/domain/usecases/leer_qr.dart';
 import 'package:security_access/domain/usecases/listar_viviendas_disponibles.dart';
+import 'package:security_access/domain/usecases/rechazar_acceso.dart';
+import 'package:security_access/domain/usecases/registrar_entrada.dart';
 import 'package:security_access/presentation/login/cuenta_demo.dart';
 import 'package:security_access/presentation/security_access_app.dart';
 import 'package:security_access/presentation/session/session_controller.dart';
@@ -40,6 +43,7 @@ SecurityAccessApp crearAplicacion({
   final listarViviendasDisponibles = ListarViviendasDisponibles(
     consultarViviendas,
   );
+  final leerQr = LeerQr(invitaciones, viviendas);
   return SecurityAccessApp(
     dependencias: Dependencias(
       iniciarSesion: IniciarSesion(repositorio),
@@ -60,6 +64,9 @@ SecurityAccessApp crearAplicacion({
       buscarInvitacion: BuscarInvitacion(invitaciones),
       cancelarInvitacion: CancelarInvitacion(invitaciones),
       consultarHistorialVisitas: ConsultarHistorialVisitas(invitaciones),
+      leerQr: leerQr,
+      registrarEntrada: RegistrarEntrada(invitaciones, leerQr),
+      rechazarAcceso: RechazarAcceso(invitaciones),
       cuentasDemo: [
         for (final registro in CuentasSemilla.registros)
           CuentaDemo(
