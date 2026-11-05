@@ -38,6 +38,34 @@ void main() {
     expect(find.text('La contraseña es obligatoria'), findsOneWidget);
   });
 
+  testWidgets('mostrar la contraseña conserva el texto y permite editarla', (
+    tester,
+  ) async {
+    await tester.pumpWidget(crearAplicacion());
+
+    await tester.enterText(find.byKey(const Key('campo-contrasena')), 'Admin');
+    await tester.tap(find.byKey(const Key('boton-ver-contrasena')));
+    await tester.pump();
+
+    final campo = tester.widget<TextField>(
+      find.byKey(const Key('campo-contrasena')),
+    );
+    expect(campo.obscureText, isFalse);
+    expect(campo.controller!.text, 'Admin');
+
+    await tester.enterText(
+      find.byKey(const Key('campo-contrasena')),
+      'Admin1234',
+    );
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const Key('campo-contrasena')))
+          .controller!
+          .text,
+      'Admin1234',
+    );
+  });
+
   testWidgets('muestra credenciales inválidas', (tester) async {
     await tester.pumpWidget(crearAplicacion());
 

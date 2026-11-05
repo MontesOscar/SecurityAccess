@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:security_access/domain/usecases/buscar_invitacion.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_usuario.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_vivienda.dart';
+import 'package:security_access/domain/usecases/cancelar_invitacion.dart';
 import 'package:security_access/domain/usecases/cerrar_sesion.dart';
+import 'package:security_access/domain/usecases/consultar_historial_visitas.dart';
+import 'package:security_access/domain/usecases/consultar_invitaciones.dart';
 import 'package:security_access/domain/usecases/consultar_usuarios.dart';
 import 'package:security_access/domain/usecases/consultar_viviendas.dart';
+import 'package:security_access/domain/usecases/crear_invitacion.dart';
 import 'package:security_access/domain/usecases/crear_usuario.dart';
 import 'package:security_access/domain/usecases/crear_vivienda.dart';
 import 'package:security_access/domain/usecases/editar_usuario.dart';
@@ -29,6 +34,11 @@ class Dependencias {
     required this.editarUsuario,
     required this.cambiarEstadoUsuario,
     required this.listarViviendasDisponibles,
+    required this.crearInvitacion,
+    required this.consultarInvitaciones,
+    required this.buscarInvitacion,
+    required this.cancelarInvitacion,
+    required this.consultarHistorialVisitas,
   });
 
   final IniciarSesion iniciarSesion;
@@ -45,6 +55,11 @@ class Dependencias {
   final EditarUsuario editarUsuario;
   final CambiarEstadoUsuario cambiarEstadoUsuario;
   final ListarViviendasDisponibles listarViviendasDisponibles;
+  final CrearInvitacion crearInvitacion;
+  final ConsultarInvitaciones consultarInvitaciones;
+  final BuscarInvitacion buscarInvitacion;
+  final CancelarInvitacion cancelarInvitacion;
+  final ConsultarHistorialVisitas consultarHistorialVisitas;
 }
 
 class DependenciasApp extends InheritedWidget {

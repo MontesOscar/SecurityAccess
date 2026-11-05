@@ -13,6 +13,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _correo = TextEditingController();
   final _contrasena = TextEditingController();
+  final _contrasenaFocus = FocusNode();
   LoginViewModel? _viewModel;
   var _ocultarContrasena = true;
 
@@ -29,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _correo.dispose();
     _contrasena.dispose();
+    _contrasenaFocus.dispose();
     _viewModel?.dispose();
     super.dispose();
   }
@@ -85,31 +87,34 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      TextField(
-                        key: const Key('campo-contrasena'),
-                        controller: _contrasena,
-                        obscureText: _ocultarContrasena,
-                        textInputAction: TextInputAction.done,
-                        autofillHints: const [AutofillHints.password],
-                        onChanged: (_) => _viewModel?.corregirContrasena(),
-                        onSubmitted: (_) => _enviar(),
-                        decoration: InputDecoration(
-                          labelText: 'Contraseña *',
-                          errorText: estado.errorContrasena,
-                          border: const OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            tooltip: _ocultarContrasena
-                                ? 'Mostrar contraseña'
-                                : 'Ocultar contraseña',
-                            onPressed: () {
-                              setState(() {
-                                _ocultarContrasena = !_ocultarContrasena;
-                              });
-                            },
-                            icon: Icon(
-                              _ocultarContrasena
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
+                      KeyedSubtree(
+                        key: ValueKey(_ocultarContrasena),
+                        child: TextField(
+                          key: const Key('campo-contrasena'),
+                          controller: _contrasena,
+                          focusNode: _contrasenaFocus,
+                          obscureText: _ocultarContrasena,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          textInputAction: TextInputAction.done,
+                          autofillHints: const [AutofillHints.password],
+                          onChanged: (_) => _viewModel?.corregirContrasena(),
+                          onSubmitted: (_) => _enviar(),
+                          decoration: InputDecoration(
+                            labelText: 'Contraseña *',
+                            errorText: estado.errorContrasena,
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              key: const Key('boton-ver-contrasena'),
+                              tooltip: _ocultarContrasena
+                                  ? 'Mostrar contraseña'
+                                  : 'Ocultar contraseña',
+                              onPressed: _alternarContrasena,
+                              icon: Icon(
+                                _ocultarContrasena
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
+                              ),
                             ),
                           ),
                         ),
@@ -178,6 +183,18 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void _alternarContrasena() {
+    final seleccion = _contrasena.selection;
+    setState(() => _ocultarContrasena = !_ocultarContrasena);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _contrasenaFocus.requestFocus();
+      _contrasena.selection = seleccion;
+    });
   }
 
   void _enviar() {
