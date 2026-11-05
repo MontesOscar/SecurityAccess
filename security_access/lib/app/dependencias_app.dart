@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:security_access/domain/usecases/cambiar_estado_usuario.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_vivienda.dart';
 import 'package:security_access/domain/usecases/cerrar_sesion.dart';
+import 'package:security_access/domain/usecases/consultar_usuarios.dart';
 import 'package:security_access/domain/usecases/consultar_viviendas.dart';
+import 'package:security_access/domain/usecases/crear_usuario.dart';
 import 'package:security_access/domain/usecases/crear_vivienda.dart';
+import 'package:security_access/domain/usecases/editar_usuario.dart';
 import 'package:security_access/domain/usecases/editar_vivienda.dart';
 import 'package:security_access/domain/usecases/iniciar_sesion.dart';
+import 'package:security_access/domain/usecases/listar_viviendas_disponibles.dart';
 import 'package:security_access/presentation/login/cuenta_demo.dart';
 import 'package:security_access/presentation/session/session_controller.dart';
 
@@ -19,6 +24,11 @@ class Dependencias {
     required this.consultarViviendas,
     required this.editarVivienda,
     required this.cambiarEstadoVivienda,
+    required this.crearUsuario,
+    required this.consultarUsuarios,
+    required this.editarUsuario,
+    required this.cambiarEstadoUsuario,
+    required this.listarViviendasDisponibles,
   });
 
   final IniciarSesion iniciarSesion;
@@ -30,6 +40,11 @@ class Dependencias {
   final ConsultarViviendas consultarViviendas;
   final EditarVivienda editarVivienda;
   final CambiarEstadoVivienda cambiarEstadoVivienda;
+  final CrearUsuario crearUsuario;
+  final ConsultarUsuarios consultarUsuarios;
+  final EditarUsuario editarUsuario;
+  final CambiarEstadoUsuario cambiarEstadoUsuario;
+  final ListarViviendasDisponibles listarViviendasDisponibles;
 }
 
 class DependenciasApp extends InheritedWidget {

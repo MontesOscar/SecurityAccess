@@ -65,7 +65,7 @@ class _EditarViviendaPageState extends State<EditarViviendaPage> {
                 guardando: estado.guardando,
                 textoBoton: 'Guardar cambios',
                 errorDireccion: estado.errorDireccion,
-                mensaje: estado.mensaje,
+                alCambiarDireccion: viewModel.corregirDireccion,
                 onGuardar: _guardar,
               ),
             );

@@ -8,6 +8,22 @@ class InMemoryAuthRepository implements AuthRepository {
 
   final List<RegistroCuenta> _registros;
   Usuario? sesionActual;
+  var _secuencia = 0;
+
+  @override
+  Future<List<Usuario>> listar() async {
+    return [for (final registro in _registros) _aUsuario(registro)];
+  }
+
+  @override
+  Future<Usuario?> buscarPorId(String id) async {
+    for (final registro in _registros) {
+      if (registro.id == id) {
+        return _aUsuario(registro);
+      }
+    }
+    return null;
+  }
 
   @override
   Future<Usuario?> buscarPorCorreo(String correo) async {
@@ -25,6 +41,51 @@ class InMemoryAuthRepository implements AuthRepository {
       return false;
     }
     return registro.contrasena == contrasena;
+  }
+
+  @override
+  Future<String> reservarId() async {
+    _secuencia += 1;
+    return 'usr-$_secuencia';
+  }
+
+  @override
+  Future<void> registrar(Usuario usuario, {required String contrasena}) async {
+    _registros.add(
+      RegistroCuenta(
+        id: usuario.id,
+        nombre: usuario.nombre,
+        correo: usuario.correo,
+        contrasena: contrasena,
+        telefono: usuario.telefono,
+        rol: usuario.rol,
+        estado: usuario.estado,
+        viviendaId: usuario.viviendaId,
+        viviendaNumero: usuario.viviendaNumero,
+      ),
+    );
+  }
+
+  @override
+  Future<void> actualizar(Usuario usuario) async {
+    final indice = _registros.indexWhere(
+      (registro) => registro.id == usuario.id,
+    );
+    if (indice < 0) {
+      return;
+    }
+    final actual = _registros[indice];
+    _registros[indice] = RegistroCuenta(
+      id: actual.id,
+      nombre: usuario.nombre,
+      correo: actual.correo,
+      contrasena: actual.contrasena,
+      telefono: usuario.telefono,
+      rol: usuario.rol,
+      estado: usuario.estado,
+      viviendaId: usuario.viviendaId,
+      viviendaNumero: usuario.viviendaNumero,
+    );
   }
 
   @override
@@ -52,8 +113,11 @@ class InMemoryAuthRepository implements AuthRepository {
       id: registro.id,
       nombre: registro.nombre,
       correo: registro.correo,
+      telefono: registro.telefono,
       rol: registro.rol,
       estado: registro.estado,
+      viviendaId: registro.viviendaId,
+      viviendaNumero: registro.viviendaNumero,
     );
   }
 }

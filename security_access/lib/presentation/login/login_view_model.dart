@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:security_access/domain/entities/usuario.dart';
 import 'package:security_access/domain/usecases/iniciar_sesion.dart';
 import 'package:security_access/domain/usecases/resultado_inicio_sesion.dart';
+import 'package:security_access/presentation/comun/validacion_formulario.dart';
 import 'package:security_access/presentation/login/login_state.dart';
 
 class LoginViewModel extends ChangeNotifier {
@@ -12,10 +13,22 @@ class LoginViewModel extends ChangeNotifier {
 
   LoginState state = const LoginState();
 
-  static const correoObligatorio = 'El correo es obligatorio';
-  static const contrasenaObligatoria = 'La contraseña es obligatoria';
   static const credencialesInvalidas = 'Credenciales inválidas';
   static const cuentaInactiva = 'Su cuenta se encuentra desactivada';
+
+  void corregirCorreo() => _limpiar(correo: true);
+
+  void corregirContrasena() => _limpiar(contrasena: true);
+
+  void _limpiar({bool correo = false, bool contrasena = false}) {
+    state = state.copyWith(
+      errorCorreo: correo ? null : state.errorCorreo,
+      errorContrasena: contrasena ? null : state.errorContrasena,
+      limpiarErroresCampo: true,
+      limpiarMensaje: true,
+    );
+    notifyListeners();
+  }
 
   Future<void> enviar({
     required String correo,
@@ -25,8 +38,8 @@ class LoginViewModel extends ChangeNotifier {
       return;
     }
 
-    final errorCorreo = correo.trim().isEmpty ? correoObligatorio : null;
-    final errorContrasena = contrasena.isEmpty ? contrasenaObligatoria : null;
+    final errorCorreo = ValidacionFormulario.correo(correo);
+    final errorContrasena = ValidacionFormulario.contrasena(contrasena);
     if (errorCorreo != null || errorContrasena != null) {
       state = state.copyWith(
         errorCorreo: errorCorreo,

@@ -56,7 +56,8 @@ class _CrearViviendaPageState extends State<CrearViviendaPage> {
                 textoBoton: 'Guardar',
                 errorNumero: estado.errorNumero,
                 errorDireccion: estado.errorDireccion,
-                mensaje: estado.mensaje,
+                alCambiarNumero: viewModel.corregirNumero,
+                alCambiarDireccion: viewModel.corregirDireccion,
                 onGuardar: _guardar,
               ),
             );

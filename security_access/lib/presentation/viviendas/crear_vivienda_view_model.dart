@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:security_access/presentation/comun/validacion_formulario.dart';
 import 'package:security_access/domain/usecases/crear_vivienda.dart';
 import 'package:security_access/domain/usecases/resultado_crear_vivienda.dart';
 
@@ -42,9 +43,33 @@ class CrearViviendaViewModel extends ChangeNotifier {
   final CrearVivienda _crear;
   CrearViviendaState state = const CrearViviendaState();
 
-  static const numeroObligatorio = 'El número de vivienda es obligatorio';
-  static const direccionObligatoria = 'La dirección es obligatoria';
   static const yaRegistrada = 'La vivienda ya está registrada';
+
+  void corregirNumero() {
+    if (state.errorNumero == null) {
+      return;
+    }
+    state = state.copyWith(
+      errorNumero: null,
+      errorDireccion: state.errorDireccion,
+      limpiarErrores: true,
+      limpiarMensaje: true,
+    );
+    notifyListeners();
+  }
+
+  void corregirDireccion() {
+    if (state.errorDireccion == null) {
+      return;
+    }
+    state = state.copyWith(
+      errorDireccion: null,
+      errorNumero: state.errorNumero,
+      limpiarErrores: true,
+      limpiarMensaje: true,
+    );
+    notifyListeners();
+  }
 
   Future<bool> guardar({
     required String numero,
@@ -54,10 +79,8 @@ class CrearViviendaViewModel extends ChangeNotifier {
       return false;
     }
 
-    final errorNumero = numero.trim().isEmpty ? numeroObligatorio : null;
-    final errorDireccion = direccion.trim().isEmpty
-        ? direccionObligatoria
-        : null;
+    final errorNumero = ValidacionFormulario.numeroVivienda(numero);
+    final errorDireccion = ValidacionFormulario.direccion(direccion);
     if (errorNumero != null || errorDireccion != null) {
       state = state.copyWith(
         errorNumero: errorNumero,
@@ -83,9 +106,9 @@ class CrearViviendaViewModel extends ChangeNotifier {
       case ViviendaYaRegistrada():
         state = state.copyWith(
           guardando: false,
-          mensaje: yaRegistrada,
-          limpiarMensaje: true,
+          errorNumero: yaRegistrada,
           limpiarErrores: true,
+          limpiarMensaje: true,
         );
         notifyListeners();
         return false;

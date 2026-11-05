@@ -5,12 +5,18 @@ import 'package:security_access/data/repositories/in_memory_vivienda_repository.
 import 'package:security_access/data/seed/cuentas_semilla.dart';
 import 'package:security_access/domain/entities/estado_cuenta.dart';
 import 'package:security_access/domain/entities/vivienda.dart';
+import 'package:security_access/domain/usecases/asignacion_vivienda.dart';
+import 'package:security_access/domain/usecases/cambiar_estado_usuario.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_vivienda.dart';
 import 'package:security_access/domain/usecases/cerrar_sesion.dart';
+import 'package:security_access/domain/usecases/consultar_usuarios.dart';
 import 'package:security_access/domain/usecases/consultar_viviendas.dart';
+import 'package:security_access/domain/usecases/crear_usuario.dart';
 import 'package:security_access/domain/usecases/crear_vivienda.dart';
+import 'package:security_access/domain/usecases/editar_usuario.dart';
 import 'package:security_access/domain/usecases/editar_vivienda.dart';
 import 'package:security_access/domain/usecases/iniciar_sesion.dart';
+import 'package:security_access/domain/usecases/listar_viviendas_disponibles.dart';
 import 'package:security_access/presentation/login/cuenta_demo.dart';
 import 'package:security_access/presentation/security_access_app.dart';
 import 'package:security_access/presentation/session/session_controller.dart';
@@ -21,6 +27,10 @@ SecurityAccessApp crearAplicacion({
   final repositorio = InMemoryAuthRepository(CuentasSemilla.registros);
   final viviendas = InMemoryViviendaRepository(viviendasIniciales);
   final consultarViviendas = ConsultarViviendas(viviendas);
+  final asignacion = AsignacionVivienda(viviendas);
+  final listarViviendasDisponibles = ListarViviendasDisponibles(
+    consultarViviendas,
+  );
   return SecurityAccessApp(
     dependencias: Dependencias(
       iniciarSesion: IniciarSesion(repositorio),
@@ -31,6 +41,11 @@ SecurityAccessApp crearAplicacion({
       consultarViviendas: consultarViviendas,
       editarVivienda: EditarVivienda(viviendas),
       cambiarEstadoVivienda: CambiarEstadoVivienda(viviendas),
+      crearUsuario: CrearUsuario(repositorio, asignacion),
+      consultarUsuarios: ConsultarUsuarios(repositorio),
+      editarUsuario: EditarUsuario(repositorio, asignacion),
+      cambiarEstadoUsuario: CambiarEstadoUsuario(repositorio, asignacion),
+      listarViviendasDisponibles: listarViviendasDisponibles,
       cuentasDemo: [
         for (final registro in CuentasSemilla.registros)
           CuentaDemo(

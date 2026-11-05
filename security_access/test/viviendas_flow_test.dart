@@ -26,6 +26,13 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Future<void> cerrarAviso(WidgetTester tester) async {
+    ScaffoldMessenger.of(
+      tester.element(find.byType(Scaffold).first),
+    ).hideCurrentSnackBar();
+    await tester.pumpAndSettle();
+  }
+
   Future<void> tocar(WidgetTester tester, Key key) async {
     final finder = find.byKey(key);
     await tester.ensureVisible(finder);
@@ -42,7 +49,8 @@ void main() {
     await tester.enterText(find.byKey(const Key('campo-numero')), numero);
     await tester.enterText(find.byKey(const Key('campo-direccion')), direccion);
     await tester.tap(find.byKey(const Key('boton-guardar-vivienda')));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
   }
 
   testWidgets('el administrador registra, consulta, edita y cambia el estado', (
@@ -52,7 +60,8 @@ void main() {
     expect(find.text('No hay viviendas registradas.'), findsOneWidget);
 
     await crearVivienda(tester, numero: '101', direccion: 'Calle Uno');
-    expect(find.text('Vivienda registrada correctamente'), findsOneWidget);
+    expect(find.text('Vivienda registrada correctamente'), findsWidgets);
+    await cerrarAviso(tester);
     expect(find.byKey(const Key('vivienda-101')), findsOneWidget);
     expect(
       tester.widget<Text>(find.byKey(const Key('estado-101'))).data,
@@ -81,8 +90,10 @@ void main() {
       'Calle Editada',
     );
     await tester.tap(find.byKey(const Key('boton-guardar-vivienda')));
-    await tester.pumpAndSettle();
-    expect(find.text('Vivienda actualizada correctamente'), findsOneWidget);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Vivienda actualizada correctamente'), findsWidgets);
+    await cerrarAviso(tester);
     expect(find.text('Calle Editada'), findsOneWidget);
 
     await tocar(tester, const Key('boton-historial-101'));
@@ -92,8 +103,10 @@ void main() {
 
     await tocar(tester, const Key('boton-desactivar-202'));
     await tester.tap(find.byKey(const Key('confirmar-desactivar')));
-    await tester.pumpAndSettle();
-    expect(find.text('Vivienda desactivada correctamente'), findsOneWidget);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Vivienda desactivada correctamente'), findsWidgets);
+    await cerrarAviso(tester);
     expect(
       tester.widget<Text>(find.byKey(const Key('estado-202'))).data,
       'Inactiva',
@@ -120,8 +133,10 @@ void main() {
     await tocar(tester, const Key('filtro-todas'));
     await tocar(tester, const Key('boton-reactivar-202'));
     await tester.tap(find.byKey(const Key('confirmar-reactivar')));
-    await tester.pumpAndSettle();
-    expect(find.text('Vivienda reactivada correctamente'), findsOneWidget);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Vivienda reactivada correctamente'), findsWidgets);
+    await cerrarAviso(tester);
     expect(
       tester.widget<Text>(find.byKey(const Key('estado-202'))).data,
       'Disponible',

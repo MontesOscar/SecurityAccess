@@ -77,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         autofillHints: const [AutofillHints.email],
+                        onChanged: (_) => _viewModel?.corregirCorreo(),
                         decoration: InputDecoration(
                           labelText: 'Correo electrónico *',
                           errorText: estado.errorCorreo,
@@ -90,6 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                         obscureText: _ocultarContrasena,
                         textInputAction: TextInputAction.done,
                         autofillHints: const [AutofillHints.password],
+                        onChanged: (_) => _viewModel?.corregirContrasena(),
                         onSubmitted: (_) => _enviar(),
                         decoration: InputDecoration(
                           labelText: 'Contraseña *',

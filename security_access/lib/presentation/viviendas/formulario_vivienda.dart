@@ -11,7 +11,8 @@ class FormularioVivienda extends StatelessWidget {
     required this.onGuardar,
     this.errorNumero,
     this.errorDireccion,
-    this.mensaje,
+    this.alCambiarNumero,
+    this.alCambiarDireccion,
     super.key,
   });
 
@@ -24,11 +25,11 @@ class FormularioVivienda extends StatelessWidget {
   final VoidCallback onGuardar;
   final String? errorNumero;
   final String? errorDireccion;
-  final String? mensaje;
+  final VoidCallback? alCambiarNumero;
+  final VoidCallback? alCambiarDireccion;
 
   @override
   Widget build(BuildContext context) {
-    final tema = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -37,6 +38,7 @@ class FormularioVivienda extends StatelessWidget {
           controller: numero,
           enabled: !numeroBloqueado,
           textInputAction: TextInputAction.next,
+          onChanged: (_) => alCambiarNumero?.call(),
           decoration: InputDecoration(
             labelText: 'Número de vivienda *',
             errorText: errorNumero,
@@ -48,6 +50,7 @@ class FormularioVivienda extends StatelessWidget {
           key: const Key('campo-direccion'),
           controller: direccion,
           textInputAction: TextInputAction.done,
+          onChanged: (_) => alCambiarDireccion?.call(),
           onSubmitted: (_) => onGuardar(),
           decoration: InputDecoration(
             labelText: 'Dirección o referencia *',
@@ -62,21 +65,10 @@ class FormularioVivienda extends StatelessWidget {
           enabled: false,
           decoration: const InputDecoration(
             labelText: 'Residente asignado',
-            helperText:
-                'La asignación de residente se habilita al registrar usuarios.',
+            helperText: 'El residente se asigna al crear o editar el usuario.',
             border: OutlineInputBorder(),
           ),
         ),
-        if (mensaje != null) ...[
-          const SizedBox(height: 16),
-          Text(
-            mensaje!,
-            key: const Key('mensaje-formulario-vivienda'),
-            style: tema.textTheme.bodyMedium?.copyWith(
-              color: tema.colorScheme.error,
-            ),
-          ),
-        ],
         const SizedBox(height: 20),
         FilledButton(
           key: const Key('boton-guardar-vivienda'),
