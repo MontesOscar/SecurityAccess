@@ -294,4 +294,89 @@ void main() {
     expect(find.text('Beto Tarde'), findsOneWidget);
     expect(find.text('Ana Temprano'), findsNothing);
   });
+
+  testWidgets('R18: busca la visita, pide confirmación con motivo y la '
+      'cierra una sola vez', (tester) async {
+    tester.view.physicalSize = const Size(1400, 2400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    Visita dentro(String id, String nombre, String vivienda, String folio) {
+      return Visita(
+        id: id,
+        viviendaId: 'viv-$vivienda',
+        viviendaNumero: vivienda,
+        residenteId: 'usr-1',
+        nombreVisitante: nombre,
+        fecha: DateTime(2026, 11, 5, 10),
+        entrada: DateTime(2026, 11, 5, 10),
+        estado: EstadoVisita.dentro,
+        tipoIdentificacion: 'INE',
+        numeroIdentificacion: folio,
+      );
+    }
+
+    await tester.pumpWidget(
+      crearAplicacion(
+        visitasIniciales: [
+          dentro('vis-a', 'Ana Visitante', '101', 'ABC123'),
+          dentro('vis-b', 'Beto Visitante', '202', 'XYZ789'),
+        ],
+      ),
+    );
+    await entrar(
+      tester,
+      correo: 'guardia@securityaccess.com',
+      contrasena: 'Guardia1234',
+    );
+    await tocar(tester, const Key('abrir-salida-manual'));
+    expect(find.text('Ana Visitante'), findsOneWidget);
+    expect(find.text('Beto Visitante'), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const Key('campo-buscar-visita')),
+      'XYZ789',
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Ana Visitante'), findsNothing);
+    await tester.enterText(find.byKey(const Key('campo-buscar-visita')), '202');
+    await tester.pumpAndSettle();
+    expect(find.text('Beto Visitante'), findsOneWidget);
+    await tester.enterText(find.byKey(const Key('campo-buscar-visita')), 'ana');
+    await tester.pumpAndSettle();
+    expect(find.text('Beto Visitante'), findsNothing);
+
+    await tocar(tester, const Key('visita-dentro-vis-a'));
+    expect(find.text('¿Cerrar esta visita?'), findsOneWidget);
+    expect(
+      tester
+          .widget<FilledButton>(
+            find.byKey(const Key('confirmar-salida-manual')),
+          )
+          .onPressed,
+      isNull,
+    );
+    await tester.tap(find.text('Volver'));
+    await tester.pumpAndSettle();
+    expect(find.text('Ana Visitante'), findsOneWidget);
+
+    await tocar(tester, const Key('visita-dentro-vis-a'));
+    await tester.enterText(
+      find.byKey(const Key('campo-motivo-salida-manual')),
+      'Perdió su QR',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('confirmar-salida-manual')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Salida registrada correctamente'), findsWidgets);
+    await cerrarAviso(tester);
+    expect(find.text('Ana Visitante'), findsNothing);
+    expect(find.byKey(const Key('visita-dentro-vis-a')), findsNothing);
+
+    await tester.enterText(find.byKey(const Key('campo-buscar-visita')), '');
+    await tester.pumpAndSettle();
+    expect(find.text('Beto Visitante'), findsOneWidget);
+    expect(find.text('Ana Visitante'), findsNothing);
+  });
 }

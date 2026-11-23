@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:security_access/domain/usecases/buscar_entrada_activa.dart';
 import 'package:security_access/domain/usecases/buscar_invitacion.dart';
+import 'package:security_access/domain/usecases/buscar_visitas_activas.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_usuario.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_vivienda.dart';
 import 'package:security_access/domain/usecases/cancelar_invitacion.dart';
@@ -21,6 +22,7 @@ import 'package:security_access/domain/usecases/listar_viviendas_disponibles.dar
 import 'package:security_access/domain/usecases/rechazar_acceso.dart';
 import 'package:security_access/domain/usecases/registrar_entrada.dart';
 import 'package:security_access/domain/usecases/registrar_salida.dart';
+import 'package:security_access/domain/usecases/registrar_salida_manual.dart';
 import 'package:security_access/presentation/login/cuenta_demo.dart';
 import 'package:security_access/presentation/session/session_controller.dart';
 
@@ -51,6 +53,8 @@ class Dependencias {
     required this.buscarEntradaActiva,
     required this.registrarSalida,
     required this.consultarVisitasDentro,
+    required this.buscarVisitasActivas,
+    required this.registrarSalidaManual,
   });
 
   final IniciarSesion iniciarSesion;
@@ -78,6 +82,8 @@ class Dependencias {
   final BuscarEntradaActiva buscarEntradaActiva;
   final RegistrarSalida registrarSalida;
   final ConsultarVisitasDentro consultarVisitasDentro;
+  final BuscarVisitasActivas buscarVisitasActivas;
+  final RegistrarSalidaManual registrarSalidaManual;
 }
 
 class DependenciasApp extends InheritedWidget {

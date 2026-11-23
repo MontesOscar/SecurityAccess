@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:security_access/presentation/entrada/registrar_entrada_page.dart';
 import 'package:security_access/presentation/home/menu_rol_page.dart';
 import 'package:security_access/presentation/salida/registrar_salida_page.dart';
+import 'package:security_access/presentation/salida/salida_manual_page.dart';
 import 'package:security_access/presentation/salida/visitas_dentro_page.dart';
 
 class MenuGuardiaPage extends StatelessWidget {
@@ -47,6 +48,18 @@ class MenuGuardiaPage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const VisitasDentroPage(),
+              ),
+            );
+          },
+        ),
+        MenuAccion(
+          key: const Key('abrir-salida-manual'),
+          etiqueta: 'Salida manual',
+          icono: Icons.edit_note,
+          alPresionar: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const SalidaManualPage(),
               ),
             );
           },
