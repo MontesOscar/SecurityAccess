@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:security_access/app/dependencias_app.dart';
 import 'package:security_access/data/repositories/in_memory_auth_repository.dart';
 import 'package:security_access/data/repositories/in_memory_invitacion_repository.dart';
+import 'package:security_access/data/repositories/in_memory_recuperacion_repository.dart';
 import 'package:security_access/data/repositories/in_memory_vivienda_repository.dart';
 import 'package:security_access/data/seed/cuentas_semilla.dart';
 import 'package:security_access/domain/entities/estado_cuenta.dart';
@@ -34,6 +35,9 @@ import 'package:security_access/domain/usecases/rechazar_acceso.dart';
 import 'package:security_access/domain/usecases/registrar_entrada.dart';
 import 'package:security_access/domain/usecases/registrar_salida.dart';
 import 'package:security_access/domain/usecases/registrar_salida_manual.dart';
+import 'package:security_access/domain/usecases/restablecer_contrasena.dart';
+import 'package:security_access/domain/usecases/solicitar_recuperacion.dart';
+import 'package:security_access/domain/usecases/validar_codigo_recuperacion.dart';
 import 'package:security_access/presentation/login/cuenta_demo.dart';
 import 'package:security_access/presentation/security_access_app.dart';
 import 'package:security_access/presentation/session/session_controller.dart';
@@ -54,6 +58,10 @@ SecurityAccessApp crearAplicacion({
   final buscarEntradaActiva = BuscarEntradaActiva(invitaciones);
   final cierreVisita = CierreVisita(invitaciones);
   final consultarVisitasDentro = ConsultarVisitasDentro(invitaciones);
+  final codigosRecuperacion = InMemoryRecuperacionRepository();
+  final validarCodigoRecuperacion = ValidarCodigoRecuperacion(
+    codigosRecuperacion,
+  );
   return SecurityAccessApp(
     dependencias: Dependencias(
       iniciarSesion: IniciarSesion(repositorio),
@@ -83,6 +91,16 @@ SecurityAccessApp crearAplicacion({
       buscarVisitasActivas: BuscarVisitasActivas(consultarVisitasDentro),
       registrarSalidaManual: RegistrarSalidaManual(cierreVisita),
       cambiarContrasena: CambiarContrasena(repositorio),
+      solicitarRecuperacion: SolicitarRecuperacion(
+        repositorio,
+        codigosRecuperacion,
+      ),
+      validarCodigoRecuperacion: validarCodigoRecuperacion,
+      restablecerContrasena: RestablecerContrasena(
+        repositorio,
+        codigosRecuperacion,
+        validarCodigoRecuperacion,
+      ),
       cuentasDemo: [
         for (final registro in CuentasSemilla.registros)
           CuentaDemo(

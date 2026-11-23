@@ -24,6 +24,9 @@ import 'package:security_access/domain/usecases/rechazar_acceso.dart';
 import 'package:security_access/domain/usecases/registrar_entrada.dart';
 import 'package:security_access/domain/usecases/registrar_salida.dart';
 import 'package:security_access/domain/usecases/registrar_salida_manual.dart';
+import 'package:security_access/domain/usecases/restablecer_contrasena.dart';
+import 'package:security_access/domain/usecases/solicitar_recuperacion.dart';
+import 'package:security_access/domain/usecases/validar_codigo_recuperacion.dart';
 import 'package:security_access/presentation/login/cuenta_demo.dart';
 import 'package:security_access/presentation/session/session_controller.dart';
 
@@ -57,6 +60,9 @@ class Dependencias {
     required this.buscarVisitasActivas,
     required this.registrarSalidaManual,
     required this.cambiarContrasena,
+    required this.solicitarRecuperacion,
+    required this.validarCodigoRecuperacion,
+    required this.restablecerContrasena,
   });
 
   final IniciarSesion iniciarSesion;
@@ -87,6 +93,9 @@ class Dependencias {
   final BuscarVisitasActivas buscarVisitasActivas;
   final RegistrarSalidaManual registrarSalidaManual;
   final CambiarContrasena cambiarContrasena;
+  final SolicitarRecuperacion solicitarRecuperacion;
+  final ValidarCodigoRecuperacion validarCodigoRecuperacion;
+  final RestablecerContrasena restablecerContrasena;
 }
 
 class DependenciasApp extends InheritedWidget {
