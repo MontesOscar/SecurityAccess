@@ -15,6 +15,7 @@ import 'package:security_access/domain/usecases/cancelar_invitacion.dart';
 import 'package:security_access/domain/usecases/consultar_historial_visitas.dart';
 import 'package:security_access/domain/usecases/consultar_invitaciones.dart';
 import 'package:security_access/domain/usecases/crear_invitacion.dart';
+import 'package:security_access/domain/usecases/cambiar_contrasena.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_usuario.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_vivienda.dart';
 import 'package:security_access/domain/usecases/cerrar_sesion.dart';
@@ -81,6 +82,7 @@ SecurityAccessApp crearAplicacion({
       consultarVisitasDentro: consultarVisitasDentro,
       buscarVisitasActivas: BuscarVisitasActivas(consultarVisitasDentro),
       registrarSalidaManual: RegistrarSalidaManual(cierreVisita),
+      cambiarContrasena: CambiarContrasena(repositorio),
       cuentasDemo: [
         for (final registro in CuentasSemilla.registros)
           CuentaDemo(

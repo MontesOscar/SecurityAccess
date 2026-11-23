@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:security_access/domain/usecases/buscar_entrada_activa.dart';
 import 'package:security_access/domain/usecases/buscar_invitacion.dart';
 import 'package:security_access/domain/usecases/buscar_visitas_activas.dart';
+import 'package:security_access/domain/usecases/cambiar_contrasena.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_usuario.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_vivienda.dart';
 import 'package:security_access/domain/usecases/cancelar_invitacion.dart';
@@ -55,6 +56,7 @@ class Dependencias {
     required this.consultarVisitasDentro,
     required this.buscarVisitasActivas,
     required this.registrarSalidaManual,
+    required this.cambiarContrasena,
   });
 
   final IniciarSesion iniciarSesion;
@@ -84,6 +86,7 @@ class Dependencias {
   final ConsultarVisitasDentro consultarVisitasDentro;
   final BuscarVisitasActivas buscarVisitasActivas;
   final RegistrarSalidaManual registrarSalidaManual;
+  final CambiarContrasena cambiarContrasena;
 }
 
 class DependenciasApp extends InheritedWidget {

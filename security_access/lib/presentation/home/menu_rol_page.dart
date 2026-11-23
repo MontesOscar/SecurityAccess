@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:security_access/app/dependencias_app.dart';
+import 'package:security_access/presentation/cuenta/cambiar_contrasena_page.dart';
 
 class MenuAccion {
   const MenuAccion({
@@ -42,11 +43,22 @@ class MenuRolPage extends StatelessWidget {
             tooltip: 'Menú de usuario',
             icon: const Icon(Icons.account_circle_outlined),
             onSelected: (opcion) {
+              if (opcion == 'contrasena') {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => const CambiarContrasenaPage(),
+                  ),
+                );
+              }
               if (opcion == 'cerrar') {
                 _cerrarSesion(dependencias);
               }
             },
             itemBuilder: (context) => const [
+              PopupMenuItem<String>(
+                value: 'contrasena',
+                child: Text('Cambiar contraseña'),
+              ),
               PopupMenuItem<String>(
                 value: 'cerrar',
                 child: Text('Cerrar sesión'),

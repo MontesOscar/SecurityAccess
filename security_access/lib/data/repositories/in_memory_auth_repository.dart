@@ -89,6 +89,29 @@ class InMemoryAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<void> actualizarContrasena({
+    required String id,
+    required String contrasena,
+  }) async {
+    final indice = _registros.indexWhere((registro) => registro.id == id);
+    if (indice < 0) {
+      return;
+    }
+    final actual = _registros[indice];
+    _registros[indice] = RegistroCuenta(
+      id: actual.id,
+      nombre: actual.nombre,
+      correo: actual.correo,
+      contrasena: contrasena,
+      telefono: actual.telefono,
+      rol: actual.rol,
+      estado: actual.estado,
+      viviendaId: actual.viviendaId,
+      viviendaNumero: actual.viviendaNumero,
+    );
+  }
+
+  @override
   Future<void> abrirSesion(Usuario usuario) async {
     sesionActual = usuario;
   }
