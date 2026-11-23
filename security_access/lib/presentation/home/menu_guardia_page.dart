@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:security_access/presentation/entrada/registrar_entrada_page.dart';
 import 'package:security_access/presentation/home/menu_rol_page.dart';
+import 'package:security_access/presentation/salida/registrar_salida_page.dart';
 
 class MenuGuardiaPage extends StatelessWidget {
   const MenuGuardiaPage({super.key});
@@ -10,7 +11,8 @@ class MenuGuardiaPage extends StatelessWidget {
     return MenuRolPage(
       key: const Key('menu-guardia'),
       titulo: 'Menú del guardia',
-      descripcion: 'Escanea el QR del visitante para registrar su entrada.',
+      descripcion:
+          'Escanea el QR del visitante para registrar su entrada o su salida.',
       acciones: [
         MenuAccion(
           key: const Key('abrir-registrar-entrada'),
@@ -20,6 +22,18 @@ class MenuGuardiaPage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const RegistrarEntradaPage(),
+              ),
+            );
+          },
+        ),
+        MenuAccion(
+          key: const Key('abrir-registrar-salida'),
+          etiqueta: 'Registrar salida',
+          icono: Icons.logout,
+          alPresionar: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const RegistrarSalidaPage(),
               ),
             );
           },

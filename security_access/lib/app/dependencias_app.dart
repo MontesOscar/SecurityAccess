@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:security_access/domain/usecases/buscar_entrada_activa.dart';
 import 'package:security_access/domain/usecases/buscar_invitacion.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_usuario.dart';
 import 'package:security_access/domain/usecases/cambiar_estado_vivienda.dart';
@@ -18,6 +19,7 @@ import 'package:security_access/domain/usecases/leer_qr.dart';
 import 'package:security_access/domain/usecases/listar_viviendas_disponibles.dart';
 import 'package:security_access/domain/usecases/rechazar_acceso.dart';
 import 'package:security_access/domain/usecases/registrar_entrada.dart';
+import 'package:security_access/domain/usecases/registrar_salida.dart';
 import 'package:security_access/presentation/login/cuenta_demo.dart';
 import 'package:security_access/presentation/session/session_controller.dart';
 
@@ -45,6 +47,8 @@ class Dependencias {
     required this.leerQr,
     required this.registrarEntrada,
     required this.rechazarAcceso,
+    required this.buscarEntradaActiva,
+    required this.registrarSalida,
   });
 
   final IniciarSesion iniciarSesion;
@@ -69,6 +73,8 @@ class Dependencias {
   final LeerQr leerQr;
   final RegistrarEntrada registrarEntrada;
   final RechazarAcceso rechazarAcceso;
+  final BuscarEntradaActiva buscarEntradaActiva;
+  final RegistrarSalida registrarSalida;
 }
 
 class DependenciasApp extends InheritedWidget {

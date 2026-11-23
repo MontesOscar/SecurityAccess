@@ -51,6 +51,8 @@ class RegistrarEntrada {
       viviendaId: invitacion.viviendaId,
       residenteId: invitacion.residenteId,
       nombreVisitante: invitacion.nombreVisitante,
+      invitacionId: invitacion.id,
+      viviendaNumero: invitacion.viviendaNumero,
       fecha: momento,
       entrada: momento,
       estado: EstadoVisita.dentro,
