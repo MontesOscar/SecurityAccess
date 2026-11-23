@@ -19,6 +19,7 @@ import 'package:security_access/domain/usecases/cambiar_estado_vivienda.dart';
 import 'package:security_access/domain/usecases/cerrar_sesion.dart';
 import 'package:security_access/domain/usecases/cierre_visita.dart';
 import 'package:security_access/domain/usecases/consultar_usuarios.dart';
+import 'package:security_access/domain/usecases/consultar_visitas_dentro.dart';
 import 'package:security_access/domain/usecases/consultar_viviendas.dart';
 import 'package:security_access/domain/usecases/crear_usuario.dart';
 import 'package:security_access/domain/usecases/crear_vivienda.dart';
@@ -74,6 +75,7 @@ SecurityAccessApp crearAplicacion({
       rechazarAcceso: RechazarAcceso(invitaciones),
       buscarEntradaActiva: buscarEntradaActiva,
       registrarSalida: RegistrarSalida(buscarEntradaActiva, cierreVisita),
+      consultarVisitasDentro: ConsultarVisitasDentro(invitaciones),
       cuentasDemo: [
         for (final registro in CuentasSemilla.registros)
           CuentaDemo(

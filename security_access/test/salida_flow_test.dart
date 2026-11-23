@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:security_access/app/crear_aplicacion.dart';
+import 'package:security_access/domain/entities/estado_visita.dart';
+import 'package:security_access/domain/entities/visita.dart';
 import 'package:security_access/presentation/entrada/simulador_lectura.dart';
 
 void main() {
@@ -221,5 +223,75 @@ void main() {
     );
     await tocar(tester, const Key('abrir-historial'));
     expect(find.text('Completada'), findsOneWidget);
+  });
+
+  testWidgets('R21: la visita aparece dentro y desaparece al registrar la '
+      'salida', (tester) async {
+    await prepararInvitacion(tester);
+    await registrarEntradaComoGuardia(tester);
+
+    await tocar(tester, const Key('abrir-visitas-dentro'));
+    expect(find.text('Ana Visitante'), findsOneWidget);
+    expect(find.textContaining('Vivienda: 101'), findsOneWidget);
+    expect(find.textContaining('INE: ABC123'), findsOneWidget);
+    expect(find.textContaining('Entrada: '), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    await leerSalida(tester, 'SA-000001');
+    await tester.tap(find.byKey(const Key('boton-confirmar-salida')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await cerrarAviso(tester);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    await tocar(tester, const Key('abrir-visitas-dentro'));
+    expect(find.text('Ana Visitante'), findsNothing);
+    expect(find.byKey(const Key('sin-visitas-dentro')), findsOneWidget);
+  });
+
+  testWidgets('R21: la lista se ordena por hora de entrada y se filtra por '
+      'vivienda', (tester) async {
+    tester.view.physicalSize = const Size(1400, 2400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    Visita dentro(String id, String nombre, String vivienda, int hora) {
+      return Visita(
+        id: id,
+        viviendaId: 'viv-$vivienda',
+        viviendaNumero: vivienda,
+        residenteId: 'usr-1',
+        nombreVisitante: nombre,
+        fecha: DateTime(2026, 11, 5, hora),
+        entrada: DateTime(2026, 11, 5, hora),
+        estado: EstadoVisita.dentro,
+        tipoIdentificacion: 'INE',
+        numeroIdentificacion: 'ID-$id',
+      );
+    }
+
+    await tester.pumpWidget(
+      crearAplicacion(
+        visitasIniciales: [
+          dentro('vis-a', 'Beto Tarde', '102', 15),
+          dentro('vis-b', 'Ana Temprano', '101', 9),
+        ],
+      ),
+    );
+    await entrar(
+      tester,
+      correo: 'guardia@securityaccess.com',
+      contrasena: 'Guardia1234',
+    );
+    await tocar(tester, const Key('abrir-visitas-dentro'));
+    final primero = tester.getTopLeft(find.text('Ana Temprano')).dy;
+    final segundo = tester.getTopLeft(find.text('Beto Tarde')).dy;
+    expect(primero, lessThan(segundo));
+
+    await elegirTexto(tester, const Key('filtro-vivienda-dentro'), '102');
+    expect(find.text('Beto Tarde'), findsOneWidget);
+    expect(find.text('Ana Temprano'), findsNothing);
   });
 }

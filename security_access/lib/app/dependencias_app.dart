@@ -8,6 +8,7 @@ import 'package:security_access/domain/usecases/cerrar_sesion.dart';
 import 'package:security_access/domain/usecases/consultar_historial_visitas.dart';
 import 'package:security_access/domain/usecases/consultar_invitaciones.dart';
 import 'package:security_access/domain/usecases/consultar_usuarios.dart';
+import 'package:security_access/domain/usecases/consultar_visitas_dentro.dart';
 import 'package:security_access/domain/usecases/consultar_viviendas.dart';
 import 'package:security_access/domain/usecases/crear_invitacion.dart';
 import 'package:security_access/domain/usecases/crear_usuario.dart';
@@ -49,6 +50,7 @@ class Dependencias {
     required this.rechazarAcceso,
     required this.buscarEntradaActiva,
     required this.registrarSalida,
+    required this.consultarVisitasDentro,
   });
 
   final IniciarSesion iniciarSesion;
@@ -75,6 +77,7 @@ class Dependencias {
   final RechazarAcceso rechazarAcceso;
   final BuscarEntradaActiva buscarEntradaActiva;
   final RegistrarSalida registrarSalida;
+  final ConsultarVisitasDentro consultarVisitasDentro;
 }
 
 class DependenciasApp extends InheritedWidget {
