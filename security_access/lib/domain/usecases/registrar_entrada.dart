@@ -51,12 +51,14 @@ class RegistrarEntrada {
       viviendaId: invitacion.viviendaId,
       residenteId: invitacion.residenteId,
       nombreVisitante: invitacion.nombreVisitante,
+      viviendaNumero: invitacion.viviendaNumero,
       fecha: momento,
       entrada: momento,
       estado: EstadoVisita.dentro,
       guardiaId: guardia.id,
       tipoIdentificacion: tipo.etiqueta,
       numeroIdentificacion: folio,
+      invitacionId: invitacion.id,
     );
     await _invitaciones.guardarVisita(visita);
     await _invitaciones.guardar(

@@ -21,4 +21,9 @@ abstract class AuthRepository {
   Future<void> abrirSesion(Usuario usuario);
 
   Future<void> cerrarSesion();
+
+  Future<void> cambiarContrasena({
+    required String correo,
+    required String contrasena,
+  });
 }
