@@ -98,6 +98,32 @@ class InMemoryAuthRepository implements AuthRepository {
     sesionActual = null;
   }
 
+  @override
+  Future<void> cambiarContrasena({
+    required String correo,
+    required String contrasena,
+  }) async {
+    final indice = _registros.indexWhere(
+      (registro) =>
+          registro.correo.toLowerCase() == correo.trim().toLowerCase(),
+    );
+    if (indice < 0) {
+      return;
+    }
+    final actual = _registros[indice];
+    _registros[indice] = RegistroCuenta(
+      id: actual.id,
+      nombre: actual.nombre,
+      correo: actual.correo,
+      contrasena: contrasena,
+      telefono: actual.telefono,
+      rol: actual.rol,
+      estado: actual.estado,
+      viviendaId: actual.viviendaId,
+      viviendaNumero: actual.viviendaNumero,
+    );
+  }
+
   RegistroCuenta? _buscar(String correo) {
     final normalizado = correo.trim().toLowerCase();
     for (final registro in _registros) {
