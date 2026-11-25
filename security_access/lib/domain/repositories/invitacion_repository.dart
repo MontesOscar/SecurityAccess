@@ -1,5 +1,6 @@
 import 'package:security_access/domain/entities/acceso_rechazado.dart';
 import 'package:security_access/domain/entities/invitacion.dart';
+import 'package:security_access/domain/entities/notificacion.dart';
 import 'package:security_access/domain/entities/visita.dart';
 
 abstract class InvitacionRepository {
@@ -26,4 +27,10 @@ abstract class InvitacionRepository {
   Future<void> guardarRechazo(AccesoRechazado rechazo);
 
   Future<String> reservarIdRechazo();
+
+  Future<List<Notificacion>> listarNotificaciones();
+
+  Future<void> guardarNotificacion(Notificacion notificacion);
+
+  Future<String> reservarIdNotificacion();
 }

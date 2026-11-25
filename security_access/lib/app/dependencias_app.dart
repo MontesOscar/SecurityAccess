@@ -7,6 +7,8 @@ import 'package:security_access/domain/usecases/cancelar_invitacion.dart';
 import 'package:security_access/domain/usecases/cerrar_sesion.dart';
 import 'package:security_access/domain/usecases/consultar_historial_visitas.dart';
 import 'package:security_access/domain/usecases/consultar_invitaciones.dart';
+import 'package:security_access/domain/usecases/consultar_notificaciones.dart';
+import 'package:security_access/domain/usecases/consultar_reporte_accesos.dart';
 import 'package:security_access/domain/usecases/consultar_usuarios.dart';
 import 'package:security_access/domain/usecases/consultar_visitas_dentro.dart';
 import 'package:security_access/domain/usecases/consultar_viviendas.dart';
@@ -53,6 +55,9 @@ class Dependencias {
     required this.consultarVisitasDentro,
     required this.cambiarContrasena,
     required this.recuperarContrasena,
+    required this.consultarNotificaciones,
+    required this.consultarReporteAccesos,
+    this.inactividad = const Duration(minutes: 15),
   });
 
   final IniciarSesion iniciarSesion;
@@ -81,6 +86,9 @@ class Dependencias {
   final ConsultarVisitasDentro consultarVisitasDentro;
   final CambiarContrasena cambiarContrasena;
   final RecuperarContrasena recuperarContrasena;
+  final ConsultarNotificaciones consultarNotificaciones;
+  final ConsultarReporteAccesos consultarReporteAccesos;
+  final Duration inactividad;
 }
 
 class DependenciasApp extends InheritedWidget {

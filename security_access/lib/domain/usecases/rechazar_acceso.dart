@@ -5,14 +5,20 @@ import 'package:security_access/domain/entities/usuario.dart';
 import 'package:security_access/domain/repositories/invitacion_repository.dart';
 import 'package:security_access/domain/usecases/leer_qr.dart';
 import 'package:security_access/domain/usecases/resultado_lectura_qr.dart';
+import 'package:security_access/domain/usecases/notificar_evento_visita.dart';
 import 'package:security_access/domain/usecases/resultado_rechazar_acceso.dart';
 
 class RechazarAcceso {
-  RechazarAcceso(this._repositorio, {DateTime Function()? ahora})
-    : _ahora = ahora ?? DateTime.now;
+  RechazarAcceso(
+    this._repositorio, {
+    DateTime Function()? ahora,
+    NotificarEventoVisita? notificar,
+  }) : _ahora = ahora ?? DateTime.now,
+       _notificar = notificar;
 
   final InvitacionRepository _repositorio;
   final DateTime Function() _ahora;
+  final NotificarEventoVisita? _notificar;
 
   static const mensajeDescripcion = 'Describe el motivo del rechazo';
 
@@ -50,8 +56,13 @@ class RechazarAcceso {
       viviendaNumero: invitacion?.viviendaNumero,
       invitacionId: invitacion?.id,
       descripcion: detalle.isEmpty ? null : detalle,
+      nombreVisitante: invitacion?.nombreVisitante,
     );
     await _repositorio.guardarRechazo(rechazo);
+    await _notificar?.rechazo(
+      rechazo: rechazo,
+      nombreVisitante: invitacion?.nombreVisitante ?? 'Visitante',
+    );
     return AccesoRechazadoRegistrado(rechazo);
   }
 }

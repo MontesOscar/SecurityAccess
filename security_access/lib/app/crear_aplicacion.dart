@@ -8,6 +8,7 @@ import 'package:security_access/data/seed/cuentas_semilla.dart';
 import 'package:security_access/domain/entities/estado_cuenta.dart';
 import 'package:security_access/domain/services/envio_codigo_recuperacion.dart';
 import 'package:security_access/domain/entities/invitacion.dart';
+import 'package:security_access/domain/entities/notificacion.dart';
 import 'package:security_access/domain/entities/visita.dart';
 import 'package:security_access/domain/entities/vivienda.dart';
 import 'package:security_access/domain/usecases/asignacion_vivienda.dart';
@@ -31,6 +32,9 @@ import 'package:security_access/domain/usecases/listar_viviendas_disponibles.dar
 import 'package:security_access/domain/usecases/rechazar_acceso.dart';
 import 'package:security_access/domain/usecases/cambiar_contrasena.dart';
 import 'package:security_access/domain/usecases/consultar_visitas_dentro.dart';
+import 'package:security_access/domain/usecases/consultar_notificaciones.dart';
+import 'package:security_access/domain/usecases/consultar_reporte_accesos.dart';
+import 'package:security_access/domain/usecases/notificar_evento_visita.dart';
 import 'package:security_access/domain/usecases/recuperar_contrasena.dart';
 import 'package:security_access/domain/usecases/registrar_entrada.dart';
 import 'package:security_access/domain/usecases/registrar_salida.dart';
@@ -42,13 +46,16 @@ SecurityAccessApp crearAplicacion({
   List<Vivienda> viviendasIniciales = const [],
   List<Invitacion> invitacionesIniciales = const [],
   List<Visita> visitasIniciales = const [],
+  List<Notificacion> notificacionesIniciales = const [],
   EnvioCodigoRecuperacion? envioRecuperacion,
+  Duration inactividad = const Duration(minutes: 15),
 }) {
   final repositorio = InMemoryAuthRepository(CuentasSemilla.registros);
   final viviendas = InMemoryViviendaRepository(viviendasIniciales);
   final invitaciones = InMemoryInvitacionRepository(
     invitaciones: invitacionesIniciales,
     visitas: visitasIniciales,
+    notificaciones: notificacionesIniciales,
   );
   final consultarViviendas = ConsultarViviendas(viviendas);
   final asignacion = AsignacionVivienda(viviendas);
@@ -56,6 +63,7 @@ SecurityAccessApp crearAplicacion({
     consultarViviendas,
   );
   final leerQr = LeerQr(invitaciones, viviendas);
+  final notificar = NotificarEventoVisita(invitaciones, viviendas);
   return SecurityAccessApp(
     dependencias: Dependencias(
       iniciarSesion: IniciarSesion(repositorio),
@@ -77,15 +85,25 @@ SecurityAccessApp crearAplicacion({
       cancelarInvitacion: CancelarInvitacion(invitaciones),
       consultarHistorialVisitas: ConsultarHistorialVisitas(invitaciones),
       leerQr: leerQr,
-      registrarEntrada: RegistrarEntrada(invitaciones, leerQr),
-      rechazarAcceso: RechazarAcceso(invitaciones),
-      registrarSalida: RegistrarSalida(invitaciones),
+      registrarEntrada: RegistrarEntrada(
+        invitaciones,
+        leerQr,
+        notificar: notificar,
+      ),
+      rechazarAcceso: RechazarAcceso(invitaciones, notificar: notificar),
+      registrarSalida: RegistrarSalida(invitaciones, notificar: notificar),
       consultarVisitasDentro: ConsultarVisitasDentro(invitaciones),
       cambiarContrasena: CambiarContrasena(repositorio),
       recuperarContrasena: RecuperarContrasena(
         repositorio,
         envio: envioRecuperacion ?? const EnvioCodigoEmailJs(),
       ),
+      consultarNotificaciones: ConsultarNotificaciones(invitaciones),
+      consultarReporteAccesos: ConsultarReporteAccesos(
+        invitaciones,
+        repositorio,
+      ),
+      inactividad: inactividad,
       cuentasDemo: [
         for (final registro in CuentasSemilla.registros)
           CuentaDemo(
