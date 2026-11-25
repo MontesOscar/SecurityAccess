@@ -6,15 +6,22 @@ import 'package:security_access/domain/entities/usuario.dart';
 import 'package:security_access/domain/entities/visita.dart';
 import 'package:security_access/domain/repositories/invitacion_repository.dart';
 import 'package:security_access/domain/usecases/leer_qr.dart';
+import 'package:security_access/domain/usecases/notificar_evento_visita.dart';
 import 'package:security_access/domain/usecases/resultado_registrar_entrada.dart';
 
 class RegistrarEntrada {
-  RegistrarEntrada(this._invitaciones, this._leer, {DateTime Function()? ahora})
-    : _ahora = ahora ?? DateTime.now;
+  RegistrarEntrada(
+    this._invitaciones,
+    this._leer, {
+    DateTime Function()? ahora,
+    NotificarEventoVisita? notificar,
+  }) : _ahora = ahora ?? DateTime.now,
+       _notificar = notificar;
 
   final InvitacionRepository _invitaciones;
   final LeerQr _leer;
   final DateTime Function() _ahora;
+  final NotificarEventoVisita? _notificar;
 
   static const mensajeIdentidad =
       'Si la identidad no coincide, no se puede autorizar la entrada';
@@ -67,6 +74,7 @@ class RegistrarEntrada {
         estadoVisita: EstadoVisita.dentro,
       ),
     );
+    await _notificar?.entrada(visita);
     return EntradaRegistrada(visita);
   }
 }

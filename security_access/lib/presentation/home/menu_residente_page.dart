@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:security_access/presentation/home/menu_rol_page.dart';
+import 'package:security_access/presentation/notificaciones/notificaciones_page.dart';
 import 'package:security_access/presentation/invitaciones/historial_visitas_page.dart';
 import 'package:security_access/presentation/invitaciones/invitaciones_page.dart';
 
@@ -33,6 +34,18 @@ class MenuResidentePage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const HistorialVisitasPage(),
+              ),
+            );
+          },
+        ),
+        MenuAccion(
+          key: const Key('abrir-notificaciones'),
+          etiqueta: 'Notificaciones',
+          icono: Icons.notifications_outlined,
+          alPresionar: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const NotificacionesPage(),
               ),
             );
           },

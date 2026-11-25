@@ -3,14 +3,20 @@ import 'package:security_access/domain/entities/rol_usuario.dart';
 import 'package:security_access/domain/entities/usuario.dart';
 import 'package:security_access/domain/entities/visita.dart';
 import 'package:security_access/domain/repositories/invitacion_repository.dart';
+import 'package:security_access/domain/usecases/notificar_evento_visita.dart';
 import 'package:security_access/domain/usecases/resultado_registrar_salida.dart';
 
 class RegistrarSalida {
-  RegistrarSalida(this._repositorio, {DateTime Function()? ahora})
-    : _ahora = ahora ?? DateTime.now;
+  RegistrarSalida(
+    this._repositorio, {
+    DateTime Function()? ahora,
+    NotificarEventoVisita? notificar,
+  }) : _ahora = ahora ?? DateTime.now,
+       _notificar = notificar;
 
   final InvitacionRepository _repositorio;
   final DateTime Function() _ahora;
+  final NotificarEventoVisita? _notificar;
 
   static const sinEntrada = 'No hay registro de entrada';
   static const yaCompletada = 'La visita ya fue completada';
@@ -127,6 +133,7 @@ class RegistrarSalida {
         );
       }
     }
+    await _notificar?.salida(cerrada);
     return SalidaRegistrada(cerrada);
   }
 }

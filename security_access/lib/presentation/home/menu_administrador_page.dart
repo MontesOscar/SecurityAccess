@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:security_access/presentation/home/menu_rol_page.dart';
+import 'package:security_access/presentation/reportes/reporte_accesos_page.dart';
 import 'package:security_access/presentation/usuarios/usuarios_page.dart';
 import 'package:security_access/presentation/viviendas/viviendas_page.dart';
 
@@ -33,6 +34,18 @@ class MenuAdministradorPage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const UsuariosPage(),
+              ),
+            );
+          },
+        ),
+        MenuAccion(
+          key: const Key('abrir-reporte'),
+          etiqueta: 'Reporte de accesos',
+          icono: Icons.assessment_outlined,
+          alPresionar: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const ReporteAccesosPage(),
               ),
             );
           },

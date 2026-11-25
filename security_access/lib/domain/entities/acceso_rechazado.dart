@@ -11,6 +11,7 @@ class AccesoRechazado {
     this.viviendaNumero,
     this.invitacionId,
     this.descripcion,
+    this.nombreVisitante,
   });
 
   final String id;
@@ -22,4 +23,5 @@ class AccesoRechazado {
   final String? viviendaNumero;
   final String? invitacionId;
   final String? descripcion;
+  final String? nombreVisitante;
 }

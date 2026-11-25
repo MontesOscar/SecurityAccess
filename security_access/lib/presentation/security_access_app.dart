@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:security_access/app/dependencias_app.dart';
 import 'package:security_access/presentation/auth_gate.dart';
+import 'package:security_access/presentation/session/vigilar_inactividad.dart';
 
 class SecurityAccessApp extends StatelessWidget {
   const SecurityAccessApp({required this.dependencias, super.key});
@@ -19,6 +20,9 @@ class SecurityAccessApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: const AuthGate(),
+        builder: (context, child) {
+          return VigilarInactividad(child: child ?? const SizedBox.shrink());
+        },
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:security_access/domain/entities/acceso_rechazado.dart';
 import 'package:security_access/domain/entities/invitacion.dart';
+import 'package:security_access/domain/entities/notificacion.dart';
 import 'package:security_access/domain/entities/visita.dart';
 import 'package:security_access/domain/repositories/invitacion_repository.dart';
 
@@ -7,15 +8,19 @@ class InMemoryInvitacionRepository implements InvitacionRepository {
   InMemoryInvitacionRepository({
     List<Invitacion> invitaciones = const [],
     List<Visita> visitas = const [],
+    List<Notificacion> notificaciones = const [],
   }) : _invitaciones = List<Invitacion>.of(invitaciones),
-       _visitas = List<Visita>.of(visitas);
+       _visitas = List<Visita>.of(visitas),
+       _notificaciones = List<Notificacion>.of(notificaciones);
 
   final List<Invitacion> _invitaciones;
   final List<Visita> _visitas;
   final List<AccesoRechazado> _rechazos = [];
+  final List<Notificacion> _notificaciones;
   var _secuencia = 0;
   var _secuenciaVisitas = 0;
   var _secuenciaRechazos = 0;
+  var _secuenciaNotificaciones = 0;
 
   @override
   Future<List<Invitacion>> listar() async {
@@ -104,5 +109,21 @@ class InMemoryInvitacionRepository implements InvitacionRepository {
   Future<String> reservarIdRechazo() async {
     _secuenciaRechazos += 1;
     return 'rec-$_secuenciaRechazos';
+  }
+
+  @override
+  Future<List<Notificacion>> listarNotificaciones() async {
+    return List<Notificacion>.of(_notificaciones);
+  }
+
+  @override
+  Future<void> guardarNotificacion(Notificacion notificacion) async {
+    _notificaciones.add(notificacion);
+  }
+
+  @override
+  Future<String> reservarIdNotificacion() async {
+    _secuenciaNotificaciones += 1;
+    return 'not-$_secuenciaNotificaciones';
   }
 }
